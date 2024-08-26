@@ -123,6 +123,37 @@ uint8_t mpu9250_read(mpu9250_data_t *mpu)
     return bytes_read;
 }
 
+uint8_t mpu9250_read_mag(mpu9250_data_t *mpu)
+{
+    uint8_t i, bytes_read = 0, bytes[TWI_BUFFER_LENGTH] = {0};
+    float *data_addr = &(mpu->mag_x);
+
+    mpu->address = MPU9250_MAG_ADDRESS;
+    mpu9250_write_byte(mpu, 0x0A, 0x01);
+
+    twi_wire_begin_transmission(mpu->address);
+    twi_wire_write_byte(0x03);
+    twi_wire_end_transmission(false);
+    bytes_read = twi_wire_request_from(mpu->address, 6, true);
+
+    if (bytes_read > 0)
+    {
+        for (i = 0; i < bytes_read; i++)
+        {
+            bytes[i] = twi_wire_read();
+        }
+
+        for (i = 0; i < bytes_read; i = i + 2)
+        {
+            data_addr[i >> 1] = ((int16_t)(bytes[i + 1] << 8) | bytes[i]);
+        }
+    }
+
+    mpu->address = MPU9250_ADDRESS;
+
+    return bytes_read;
+}
+
 void mpu9250_set_addr(mpu9250_data_t *mpu, uint8_t addr)
 {
     mpu->address = addr;
@@ -312,6 +343,21 @@ float mpu9250_get_gyro_y(mpu9250_data_t *mpu)
 float mpu9250_get_gyro_z(mpu9250_data_t *mpu)
 {
     return mpu->gyro_z;
+}
+
+float mpu9250_get_mag_x(mpu9250_data_t *mpu)
+{
+    return mpu->mag_x;
+}
+
+float mpu9250_get_mag_(mpu9250_data_t *mpu)
+{
+    return mpu->mag_y;
+}
+
+float mpu9250_get_mag_z(mpu9250_data_t *mpu)
+{
+    return mpu->mag_z;
 }
 
 mpu9250_fsync_t mpu9250_get_fsync(mpu9250_data_t *mpu)

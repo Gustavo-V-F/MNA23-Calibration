@@ -154,6 +154,9 @@ typedef struct
     float gyro_x;  //
     float gyro_y;  //
     float gyro_z;  //
+    float mag_x;
+    float mag_y;
+    float mag_z;
     uint8_t smplrt_div;
     uint8_t config;
     uint8_t gyro_config;
@@ -176,6 +179,7 @@ extern "C"
     void mpu9250_write_byte(mpu9250_data_t *mpu, uint8_t reg, uint8_t value);
     uint8_t mpu9250_read_byte(mpu9250_data_t *mpu, uint8_t reg);
     uint8_t mpu9250_read(mpu9250_data_t *mpu);
+    uint8_t mpu9250_read_mag(mpu9250_data_t *mpu);
     void mpu9250_set_addr(mpu9250_data_t *mpu, uint8_t addr);
     void mpu9250_set_smplrt_div(mpu9250_data_t *mpu, uint8_t smplrt);
     void mpu9250_set_fsync(mpu9250_data_t *mpu, mpu9250_fsync_t fsync);
@@ -201,6 +205,9 @@ extern "C"
     float mpu9250_get_gyro_x(mpu9250_data_t *mpu);
     float mpu9250_get_gyro_y(mpu9250_data_t *mpu);
     float mpu9250_get_gyro_z(mpu9250_data_t *mpu);
+    float mpu9250_get_mag_x(mpu9250_data_t *mpu);
+    float mpu9250_get_mag_y(mpu9250_data_t *mpu);
+    float mpu9250_get_mag_z(mpu9250_data_t *mpu);
     mpu9250_fsync_t mpu9250_get_fsync(mpu9250_data_t *mpu);
     mpu9250_gyro_range_t mpu9250_get_gyro_range(mpu9250_data_t *mpu);
     mpu9250_accel_range_t mpu9250_get_accel_range(mpu9250_data_t *mpu);
