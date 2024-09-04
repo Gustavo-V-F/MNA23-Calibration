@@ -48,9 +48,8 @@ int main(void)
     hmc5883l_config(&mag, declination, gain);
 #endif
 
-
 #ifdef MPU9250_ON
-    bool available_mpu = 0;
+    bool available_mpu = false;
     bool init_mpu = true;
 #endif
 
@@ -127,7 +126,7 @@ int main(void)
         {
             if (mpu9250_read(&mpu))
             {
-                usart_send_string("Raw:");
+                usart_send_string("\nRaw:");
                 usart_send_float(mpu9250_get_accel_x(&mpu));
                 usart_send_string(",");
                 usart_send_float(mpu9250_get_accel_y(&mpu));
@@ -144,6 +143,38 @@ int main(void)
                 wdt_reset();
 #endif
             }
+
+            if (mpu9250_read_mag(&mpu))
+            {
+                usart_send_string(",");
+                usart_send_float(mpu9250_get_mag_x(&mpu));
+                usart_send_string(",");
+                usart_send_float(mpu9250_get_mag_y(&mpu));
+                usart_send_string(",");
+                usart_send_float(mpu9250_get_mag_z(&mpu));
+#ifdef WATCHDOG_ON
+                wdt_reset();
+#endif
+            }
+
+            usart_send_string("\nUni:");
+            usart_send_float((mpu9250_get_accel_x(&mpu) / 16384) * 9.80665);
+            usart_send_string(",");
+            usart_send_float((mpu9250_get_accel_y(&mpu) / 16384) * 9.80665);
+            usart_send_string(",");
+            usart_send_float((mpu9250_get_accel_z(&mpu) / 16384) * 9.80665);
+            usart_send_string(",");
+            usart_send_float((mpu9250_get_gyro_x(&mpu) / (32768 / 250)) * 0.017453293F);
+            usart_send_string(",");
+            usart_send_float((mpu9250_get_gyro_y(&mpu) / (32768 / 250)) * 0.017453293F);
+            usart_send_string(",");
+            usart_send_float((mpu9250_get_gyro_z(&mpu) / (32768 / 250)) * 0.017453293F);
+            usart_send_string(",");
+            usart_send_float((mpu9250_get_mag_x(&mpu)));
+            usart_send_string(",");
+            usart_send_float((mpu9250_get_mag_y(&mpu)));
+            usart_send_string(",");
+            usart_send_float((mpu9250_get_mag_z(&mpu)));
         }
 #endif
 
@@ -303,9 +334,9 @@ int main(void)
             wdt_reset();
 #endif
         }
+#endif
     }
 }
-#endif
 
 ISR(BADISR_vect)
 {
